@@ -1,0 +1,23 @@
+{
+  "name": "back",
+  "version": "1.0.0",
+  "description": "A Rest Api for Series Management",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MagicVirus/lic-pro-2019-project.git"
+  },
+  "keywords": [
+    "Node.Js",
+    "React.Js"
+  ],
+  "author": "Denis Karupovic",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MagicVirus/lic-pro-2019-project/issues"
+  },
+  "homepage": "https://github.com/MagicVirus/lic-pro-2019-project#readme"
+}
