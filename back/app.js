@@ -1,14 +1,14 @@
-import express from 'express';
-import db from './db/db';
+var express = require('express');
+var db = require('./db/db');
 
 // Set up the express app
 const app = express();
 
 // get all todos
-app.get('/api/v1/todos', (req, res) => {
+app.get('/api/v1/list', (req, res) => {
     res.status(200).send({
         success: 'true',
-        message: 'todos retrieved successfully',
+        message: 'series retrieved successfully',
         todos: db
     })
 });
