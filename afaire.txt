@@ -18,3 +18,8 @@ Julien :
 
 Issam:
         test d'intégration
+
+Debug :
+https_proxy=""
+http_proxy=""
+npm install -i express

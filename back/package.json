@@ -19,5 +19,9 @@
   "bugs": {
     "url": "https://github.com/MagicVirus/lic-pro-2019-project/issues"
   },
-  "homepage": "https://github.com/MagicVirus/lic-pro-2019-project#readme"
+  "homepage": "https://github.com/MagicVirus/lic-pro-2019-project#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "express-generator": "^4.16.0"
+  }
 }
