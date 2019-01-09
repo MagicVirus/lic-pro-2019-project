@@ -1,14 +1,20 @@
-const http = require('http');
+import express from 'express';
+import db from './db/db';
 
-const hostname = '127.0.0.1';
-const port = 3000;
+// Set up the express app
+const app = express();
 
-const server = http.createServer((req, res) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain');
-    res.end('Hello World\n');
+// get all todos
+app.get('/api/v1/todos', (req, res) => {
+    res.status(200).send({
+        success: 'true',
+        message: 'todos retrieved successfully',
+        todos: db
+    })
 });
 
-server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
+const PORT = 5000;
+
+app.listen(PORT, () => {
+    console.log(`server running on port ${PORT}`)
 });
