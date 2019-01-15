@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/MagicVirus/lic-pro-2019-project#readme",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.4"
   },
   "devDependencies": {}
