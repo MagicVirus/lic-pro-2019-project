@@ -1,7 +1,7 @@
 var express = require('express');
-var db = require('./db/db');
 var bodyParser = require('body-parser');
 var fs = require('fs');
+var fileManager = require('./fileManager');
 
 // Set up the express app
 const app = express();
@@ -14,10 +14,10 @@ app.get('/episodes', (req, res) => {
     res.status(200).send({
         success: 'true',
         message: 'series retrieved successfully',
-        todos: db
+        todos: '1',
     })
 });
-app.post('/create', (req, res) => {
+app.post('/show', (req, res) => {
   if(!req.body.name) {
     return res.status(400).send({
       body: req.body,
@@ -30,14 +30,13 @@ app.post('/create', (req, res) => {
       message: 'code is required'
     });
   }
-  const serie = {
-    id: db.data.length + 1,
+  const episode = {
+    id: 1,
     name: req.body.name,
     code: req.body.code,
     note: 0,
   }
-  db.data.push(serie);
-  fs.writeFile('myjsonfile.json', JSON.stringify(db), 'utf8', null);
+  fileManager.addEpisode(episode);
 
   return res.status(201).send({
     success: 'true',
