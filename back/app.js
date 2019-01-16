@@ -41,7 +41,7 @@ app.post('/show', (req, res) => {
   return res.status(201).send({
     success: 'true',
     message: 'serie added successfully',
-    serie
+    episode
   })
 });
 
