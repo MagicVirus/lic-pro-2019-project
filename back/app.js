@@ -89,7 +89,7 @@ app.put('/update', (req, res) => {
 
     res.status(200).send({
         success: 'true',
-        message: 'episode deleted successfully',
+        message: 'episode modified successfully',
         episode: req.body.uuid,
     })
 });
