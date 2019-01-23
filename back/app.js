@@ -7,8 +7,8 @@ const app = express();
 
 var data = {};
 var degueulasse = fileManager.getEpisodes('episodes/', function(filename, content) {
-    data[filename] = content;
-    console.log('filenae :'+ data[filename])
+    data[filename] = JSON.parse(content);
+    console.log('filename :'+ data[filename])
 }, function(err) {
     throw err;
 });
@@ -21,12 +21,31 @@ app.get('/episodes', (req, res) => {
 
     res.status(200).send({
         success: 'true',
-        message: 'series retrieved successfully',
+        message: 'episodes retrieved successfully',
         episodes: data,
     })
 });
 
-app.post('/show', (req, res) => {
+app.delete('/delete', (req, res) => {
+
+    if (!req.body.uuid) {
+        return res.status(400).send({
+            body: req.body,
+            success: 'false',
+            message: 'uuid is required'
+        });
+    }
+
+    fileManager.removeEpisode(req.body.uuid);
+
+    res.status(200).send({
+        success: 'true',
+        message: 'episode deleted successfully',
+        episode: req.body.uuid,
+    })
+});
+
+app.post('/add', (req, res) => {
     if (!req.body.name) {
         return res.status(400).send({
             body: req.body,
@@ -53,6 +72,25 @@ app.post('/show', (req, res) => {
         success: 'true',
         message: 'serie added successfully',
         episode
+    })
+});
+
+app.put('/update', (req, res) => {
+
+    if (!req.body.uuid) {
+        return res.status(400).send({
+            body: req.body,
+            success: 'false',
+            message: 'uuid is required'
+        });
+    }
+
+    fileManager.editEpisode(req.body.uuid,req.body.name,req.body.code,req.body.note);
+
+    res.status(200).send({
+        success: 'true',
+        message: 'episode deleted successfully',
+        episode: req.body.uuid,
     })
 });
 
