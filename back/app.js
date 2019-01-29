@@ -5,30 +5,34 @@ const fileManager = require('./fileManager');
 const uuidv1 = require('uuid/v1');
 const app = express();
 
-var data = {};
-var degueulasse = fileManager.getEpisodes('episodes/', function(filename, content) {
-    data[filename] = JSON.parse(content);
-    console.log('filename :'+ data[filename])
-}, function(err) {
-    throw err;
-});
-console.log(degueulasse)
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-app.get('/episodes', (req, res) => {
 
-    res.status(200).send({
-        success: 'true',
-        message: 'episodes retrieved successfully',
-        episodes: data,
-    })
+app.get('/api/episodes', (req, res) => {
+
+    var episodes = fileManager.getEpisodes('episodes/');
+
+    if ( episodes === false) {
+        res.status(500).send({
+            success: 'false',
+            message: 'error retriving episodes',
+            episodes: episodes,
+        })
+    }
+    else {
+        res.status(200).send({
+            success: 'true',
+            message: 'episodes retrieved successfully',
+            episodes: episodes,
+        })
+    }
+
 });
 
-app.delete('/delete', (req, res) => {
+app.delete('/api/delete/:uuid', (req, res) => {
 
-    if (!req.body.uuid) {
+    if (!req.params.uuid) {
         return res.status(400).send({
             body: req.body,
             success: 'false',
@@ -36,26 +40,29 @@ app.delete('/delete', (req, res) => {
         });
     }
 
-    fileManager.removeEpisode(req.body.uuid);
-
-    res.status(200).send({
-        success: 'true',
-        message: 'episode deleted successfully',
-        episode: req.body.uuid,
-    })
+    if ( fileManager.removeEpisode(req.params.uuid))
+    {
+        res.status(200).send({
+            success: 'true',
+            message: 'episode deleted successfully',
+            episode: req.params.uuid,
+        })
+    }
+    else {
+        res.status(500).send({
+            success: 'false',
+            message: 'File not found',
+        })
+    }
 });
 
-app.post('/add', (req, res) => {
-    if (!req.body.name) {
+app.post('/api/add', (req, res) => {
+
+    if (!req.body.name || !req.body.code || !req.body.note) {
         return res.status(400).send({
             body: req.body,
             success: 'false',
-            message: 'name is required'
-        });
-    } else if (!req.body.code) {
-        return res.status(400).send({
-            success: 'false',
-            message: 'code is required'
+            message: 'Missing parameters'
         });
     }
 
@@ -66,18 +73,24 @@ app.post('/add', (req, res) => {
         note: 0,
     }
 
-    fileManager.addEpisode(episode);
-
-    return res.status(201).send({
-        success: 'true',
-        message: 'serie added successfully',
-        episode
-    })
+    if( fileManager.addEpisode(episode)) {
+        return res.status(201).send({
+            success: 'true',
+            message: 'serie added successfully',
+            episode
+        })
+    }
+    else {
+        res.status(500).send({
+            success: 'false',
+            message: 'Error occured when adding episode',
+        });
+    }
 });
 
-app.put('/update', (req, res) => {
+app.put('/api/update/:uuid', (req, res) => {
 
-    if (!req.body.uuid) {
+    if (!req.params.uuid) {
         return res.status(400).send({
             body: req.body,
             success: 'false',
@@ -90,7 +103,7 @@ app.put('/update', (req, res) => {
     res.status(200).send({
         success: 'true',
         message: 'episode modified successfully',
-        episode: req.body.uuid,
+        episode: req.params.uuid,
     })
 });
 
