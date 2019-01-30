@@ -40,6 +40,9 @@ app.delete('/api/delete/:uuid', (req, res) => {
         });
     }
 
+    promise.then(successCallback, failureCallback);
+    }
+
     if ( fileManager.removeEpisode(req.params.uuid))
     {
         res.status(200).send({
@@ -51,7 +54,7 @@ app.delete('/api/delete/:uuid', (req, res) => {
     else {
         res.status(500).send({
             success: 'false',
-            message: 'File not found',
+            message: 'Episode not found',
         })
     }
 });

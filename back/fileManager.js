@@ -64,11 +64,15 @@ module.exports = {
      return true;
  },
     removeEpisode(uuid) {
-        if(!fs.existsSync(file)) {
-            return false;
-        }
-        fs.unlinkSync('episodes/' + uuid + '.json');
 
-        return true;
+      return Promise(resolve, reject) => {
+        if(!fs.exists('episodes/' + uuid + '.json')) {
+            reject("Failed to delete this episode");
+        }
+        else {
+            fs.unlink('episodes/' + uuid + '.json');
+            resolve("Sucessfully deleted this episode");
+        }
+
     }
-}
+},
