@@ -1,23 +1,32 @@
 var fs = require('fs');
 const path = require('path');
+const uuidv1 = require('uuid/v1');
 
 module.exports = {
 
-  addEpisode(episode) {
+  addEpisode(name,code,note) {
 
-     fs.writeFile('episodes/' + episode.id + '.json', JSON.stringify(episode,null,2), 'utf8',  (err) => {
+      let episode = {
+          id: uuidv1(),
+          name: name,
+          code: code,
+          note: note,
+      };
+
+      fs.writeFile('episodes/' + episode.id + '.json', JSON.stringify(episode,null,2), 'utf8',  (err) => {
          if (err) return false;
      });
+
      return true;
  },
 
  getEpisodes(dirname) {
 
-      data =[];
+     let data = [];
 
      fs.readdir(dirname, function(err, filenames) {
          if (err) {
-             console.log("erreur reading directory");
+             console.log("Error while reading directory");
              return false;
          }
          filenames.forEach(function(filename) {
@@ -42,12 +51,17 @@ module.exports = {
          name: name,
          code: code,
          note: note,
+     };
+
+     if(fs.existsSync('episodes/' + uuid + '.json')) {
+        fs.unlinkSync('episodes/' + uuid + '.json');
      }
 
-     fs.unlinkSync('episodes/' + uuid + '.json');
+      fs.writeFile('episodes/' + episode.id + '.json', JSON.stringify(episode,null,2), 'utf8',function(err) {
+         if(err) return false;
+     })
 
-     fs.writeFile('episodes/' + episode.id + '.json', JSON.stringify(episode), 'utf8', null);
-
+     return true;
  },
     removeEpisode(uuid) {
         if(!fs.existsSync(file)) {
