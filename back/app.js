@@ -62,7 +62,7 @@ app.post('/api/add', (req, res) => {
         return res.status(400).send({
             body: req.body,
             success: 'false',
-            message: 'Missing parameters'
+            message: 'Missing parameters \n'+'name ='+req.body.name+'\ncode ='+req.body.code + '\nnote ='+req.body.note
         });
     }
 
@@ -70,8 +70,8 @@ app.post('/api/add', (req, res) => {
         id: uuidv1(),
         name: req.body.name,
         code: req.body.code,
-        note: 0,
-    }
+        note: req.body.note,
+    };
 
     if( fileManager.addEpisode(episode)) {
         return res.status(201).send({
