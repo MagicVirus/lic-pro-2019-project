@@ -4,24 +4,20 @@ const uuidv1 = require('uuid/v1');
 
 module.exports = {
 
-  addEpisode(name,code,note) {
-
-      let episode = {
-          id: uuidv1(),
-          name: name,
-          code: code,
-          note: note,
-      };
-
-      fs.writeFile('episodes/' + episode.id + '.json', JSON.stringify(episode,null,2), 'utf8',  (err) => {
-         if (err) return false;
-     });
-
-     return true;
- },
+    addEpisode(name, code, note) {
+        let episode = {
+            id: uuidv1(),
+            name: name,
+            code: code,
+            note: note,
+        };
+        fs.writeFile('episodes/' + episode.id + '.json', JSON.stringify(episode, null, 2), 'utf8', (err) => {
+            if (err) return false;
+        });
+        return true;
+    },
 
     getEpisodes(dirname) {
-        //let data = [];
         return new Promise((resolve, reject) => {
             this.readEpisodes(dirname).then((fileNames) => {
                 const p = fileNames.map((fileName) => {
@@ -31,38 +27,48 @@ module.exports = {
                     resolve(episodes);
                 })
             });
-        })
- },
+        });
+    },
+    readEpisodes(dirname) {
+        return new Promise(function (resolve, reject) {
+            fs.readdir(dirname, function (err, filename) {
+                resolve(filename);
+                if (err) reject('erreur');
+            });
+        });
+    },
+    readEpisode: function (dirname, filename) {
+        return new Promise(function (resolve, reject) {
+            fs.readFile(dirname + filename, function (err, content) {
+                resolve(JSON.parse(content));
+                if (err) reject('erreur');
+            });
+        });
+    },
+    editEpisode(uuid, name, code, note) {
 
- editEpisode(uuid, name, code, note) {
+        var episode = {
+            id: uuid,
+            name: name,
+            code: code,
+            note: note,
+        };
 
-     var episode = {
-         id: uuid,
-         name: name,
-         code: code,
-         note: note,
-     };
+        if (fs.existsSync('episodes/' + uuid + '.json')) fs.unlinkSync('episodes/' + uuid + '.json');
 
-     if(fs.existsSync('episodes/' + uuid + '.json')) {
-        fs.unlinkSync('episodes/' + uuid + '.json');
-     }
+        fs.writeFile('episodes/' + episode.id + '.json', JSON.stringify(episode, null, 2), 'utf8', function (err) {
+            if (err) return false;
+        });
+        return true;
+    },
 
-      fs.writeFile('episodes/' + episode.id + '.json', JSON.stringify(episode,null,2), 'utf8',function(err) {
-         if(err) return false;
-     })
-
-     return true;
- },
     removeEpisode(uuid) {
-
-      return Promise(resolve, reject) => {
-        if(!fs.exists('episodes/' + uuid + '.json')) {
-            reject("Failed to delete this episode");
-        }
-        else {
-            fs.unlink('episodes/' + uuid + '.json');
-            resolve("Sucessfully deleted this episode");
-        }
-
-    }
-},
+        return new Promise((resolve, reject) => {
+            if (!fs.exists('episodes/' + uuid + '.json')) reject("Failed to delete this episode");
+            else {
+                fs.unlink('episodes/' + uuid + '.json');
+                resolve("Sucessfully deleted this episode");
+            }
+        });
+    },
+};
