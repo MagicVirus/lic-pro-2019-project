@@ -4,13 +4,8 @@ const uuidv1 = require('uuid/v1');
 
 module.exports = {
 
-    addEpisode(name, code, note) {
-        let episode = {
-            id: uuidv1(),
-            name: name,
-            code: code,
-            note: note,
-        };
+    addEpisode(episode) {
+        console.log(episode);
         fs.writeFile('episodes/' + episode.id + '.json', JSON.stringify(episode, null, 2), 'utf8', (err) => {
             if (err) return false;
         });
@@ -29,7 +24,7 @@ module.exports = {
             });
         });
     },
-    readEpisodes(dirname) {
+    readEpisodes: function (dirname) {
         return new Promise(function (resolve, reject) {
             fs.readdir(dirname, function (err, filename) {
                 resolve(filename);
@@ -45,6 +40,7 @@ module.exports = {
             });
         });
     },
+
     editEpisode(uuid, name, code, note) {
 
         var episode = {
