@@ -1,74 +1,110 @@
-var fs = require('fs');
-const path = require('path');
+const express = require('express');
+const bodyParser = require('body-parser');
+const fs = require('fs');
+const fileManager = require('./fileManager');
 const uuidv1 = require('uuid/v1');
+const app = express();
 
-module.exports = {
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
 
-  addEpisode(name,code,note) {
 
-      let episode = {
-          id: uuidv1(),
-          name: name,
-          code: code,
-          note: note,
-      };
+app.get('/api/episodes', (req, res) => {
 
-      fs.writeFile('episodes/' + episode.id + '.json', JSON.stringify(episode,null,2), 'utf8',  (err) => {
-         if (err) return false;
-     });
+    var promise = fileManager.getEpisodes('episodes/',res);
+    promise.then((episodes) => {
+        res.send({
+            message: 'episodes retrieved successfully',
+            episodes: episodes,
+        });
+    }).catch(() => {
+        res.status(500).send({
+            message: 'error retriving episodes',
+        });
+    });
 
-     return true;
- },
 
- getEpisodes(dirname) {
+});
 
-     let data = [];
+app.delete('/api/delete/:uuid', (req, res) => {
 
-     fs.readdir(dirname, function(err, filenames) {
-         if (err) {
-             console.log("Error while reading directory");
-             return false;
-         }
-         filenames.forEach(function(filename) {
-
-             fs.readFile(dirname + filename, 'utf-8', function(err, content) {
-                 if (err) {
-                     return false;
-                 }
-                 data.push(JSON.parse(content));
-
-             });
-         });
-     });
-     return data;
-
- },
-
- editEpisode(uuid, name, code, note) {
-
-     var episode = {
-         id: uuid,
-         name: name,
-         code: code,
-         note: note,
-     };
-
-     if(fs.existsSync('episodes/' + uuid + '.json')) {
-        fs.unlinkSync('episodes/' + uuid + '.json');
-     }
-
-      fs.writeFile('episodes/' + episode.id + '.json', JSON.stringify(episode,null,2), 'utf8',function(err) {
-         if(err) return false;
-     })
-
-     return true;
- },
-    removeEpisode(uuid) {
-        if(!fs.existsSync(file)) {
-            return false;
-        }
-        fs.unlinkSync('episodes/' + uuid + '.json');
-
-        return true;
+    if (!req.params.uuid) {
+        return res.status(400).send({
+            body: req.body,
+            success: 'false',
+            message: 'uuid is required'
+        });
     }
-}
+
+    if ( fileManager.removeEpisode(req.params.uuid))
+    {
+        res.status(200).send({
+            success: 'true',
+            message: 'episode deleted successfully',
+            episode: req.params.uuid,
+        })
+    }
+    else {
+        res.status(500).send({
+            success: 'false',
+            message: 'File not found',
+        })
+    }
+});
+
+app.post('/api/add', (req, res) => {
+
+    if (!req.body.name || !req.body.code || !req.body.note) {
+        return res.status(400).send({
+            body: req.body,
+            success: 'false',
+            message: 'Missing parameters :'+'name ='+req.body.name+'; code ='+req.body.code + '; note ='+req.body.note
+        });
+    }
+
+    const episode = {
+        id: uuidv1(),
+        name: req.body.name,
+        code: req.body.code,
+        note: req.body.note,
+    };
+
+    if( fileManager.addEpisode(episode)) {
+        return res.status(201).send({
+            success: 'true',
+            message: 'serie added successfully',
+            episode
+        })
+    }
+    else {
+        res.status(500).send({
+            success: 'false',
+            message: 'Error occured when adding episode',
+        });
+    }
+});
+
+app.put('/api/update/:uuid', (req, res) => {
+
+    if (!req.params.uuid) {
+        return res.status(400).send({
+            body: req.body,
+            success: 'false',
+            message: 'uuid is required'
+        });
+    }
+
+    fileManager.editEpisode(req.body.uuid,req.body.name,req.body.code,req.body.note);
+
+    res.status(200).send({
+        success: 'true',
+        message: 'episode modified successfully',
+        episode: req.params.uuid,
+    })
+});
+
+const PORT = 5000;
+
+app.listen(PORT, () => {
+    console.log(`server running on port ${PORT}`)
+});
