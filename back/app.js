@@ -11,22 +11,18 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 app.get('/api/episodes', (req, res) => {
 
-    var episodes = fileManager.getEpisodes('episodes/');
-
-    if ( episodes === false) {
-        res.status(500).send({
-            success: 'false',
-            message: 'error retriving episodes',
-            episodes: episodes,
-        })
-    }
-    else {
-        res.status(200).send({
-            success: 'true',
+    var promise = fileManager.getEpisodes('episodes/',res);
+    promise.then((episodes) => {
+        res.send({
             message: 'episodes retrieved successfully',
             episodes: episodes,
-        })
-    }
+        });
+    }).catch(() => {
+        res.status(500).send({
+            message: 'error retriving episodes',
+        });
+    })
+
 
 });
 
@@ -65,7 +61,7 @@ app.post('/api/add', (req, res) => {
         return res.status(400).send({
             body: req.body,
             success: 'false',
-            message: 'Missing parameters \n'+'name ='+req.body.name+'\ncode ='+req.body.code + '\nnote ='+req.body.note
+            message: 'Missing parameters :'+'name ='+req.body.name+'; code ='+req.body.code + '; note ='+req.body.note
         });
     }
 
