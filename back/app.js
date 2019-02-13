@@ -2,6 +2,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fileManager = require('./fileManager');
 const app = express();
+var fs = require('fs');
+var Q = require('q');
+
+var defer = Q.defer();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -31,20 +35,22 @@ app.delete('/api/delete/:uuid', (req, res) => {
         });
     }
 
-    promise.then(successCallback, failureCallback);
+    console.log(req.params.uuid);
+    fs.exists('episodes/' + req.params.uuid + '.json', defer.resolve);
 
-    if (fileManager.removeEpisode(req.params.uuid)) {
-        res.status(200).send({
-            success: 'true',
-            message: 'episode deleted successfully',
-            episode: req.params.uuid,
-        })
-    } else {
-        res.status(500).send({
-            success: 'false',
-            message: 'Episode not found',
-        })
-    }
+    defer.promise.then(function(exists) {
+        if (exists) {
+            fs.unlink('episodes/' + req.params.uuid  + '.json');
+            res.status(200).send({
+                success: 'true',
+                message: 'episode deleted successfully',
+                episode: req.params.uuid,
+            })        } else {
+            res.status(500).send({
+                success: 'false',
+                message: 'Episode not found',
+            })        }
+    });
 });
 
 app.post('/api/add', (req, res) => {

@@ -1,6 +1,8 @@
 var fs = require('fs');
 const path = require('path');
 const uuidv1 = require('uuid/v1');
+var Q = require('q');
+var defer = Q.defer();
 
 module.exports = {
 
@@ -68,12 +70,16 @@ module.exports = {
     },
 
     removeEpisode(uuid) {
-        return new Promise((resolve, reject) => {
-            if (!fs.exists('episodes/' + uuid + '.json')) reject("Failed to delete this episode");
-            else {
-                fs.unlink('episodes/' + uuid + '.json');
-                resolve("Sucessfully deleted this episode");
+
+        fs.exists('episodes/' + uuid + '.json', defer.resolve);
+
+        defer.promise.then(function(exists) {
+            if (exists) {
+                return "0";
+            } else {
+                return "1";
             }
         });
+
     },
 };
