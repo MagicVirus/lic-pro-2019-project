@@ -1,8 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs');
 const fileManager = require('./fileManager');
-const uuidv1 = require('uuid/v1');
 const app = express();
 
 app.use(bodyParser.json());

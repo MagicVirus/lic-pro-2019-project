@@ -4,8 +4,17 @@ const uuidv1 = require('uuid/v1');
 
 module.exports = {
 
-    addEpisode(episode) {
-        console.log(episode);
+    addEpisode(name,code, note) {
+
+        let episode = {
+            id: uuidv1(),
+            name: name,
+            code: code,
+            note: note,
+        };
+
+        console.log(episode.id);
+
         fs.writeFile('episodes/' + episode.id + '.json', JSON.stringify(episode, null, 2), 'utf8', (err) => {
             if (err) return false;
         });
