@@ -6,7 +6,7 @@ var defer = Q.defer();
 
 module.exports = {
 
-    addEpisode(name,code, note) {
+    addEpisode(name, code, note) {
 
         let episode = {
             id: uuidv1(),
@@ -70,16 +70,22 @@ module.exports = {
     },
 
     removeEpisode(uuid) {
-
-        fs.exists('episodes/' + uuid + '.json', defer.resolve);
-
-        defer.promise.then(function(exists) {
-            if (exists) {
-                return "0";
-            } else {
-                return "1";
-            }
+        return new Promise(function (resolve, reject) {
+            fs.exists('episodes/' + uuid + '.json', defer.resolve);
+            defer.promise.then(function (exists) {
+                if (exists) {
+                    fs.unlink('episodes/' + uuid + '.json', function (err) {
+                        if (err) {
+                            return console.log("Delete error: " + err);
+                        } else {
+                            console.log("file deleted successfully");
+                        }
+                    });
+                    resolve("Deleted");
+                } else {
+                    reject("Failed to delete");
+                }
+            });
         });
-
     },
 };

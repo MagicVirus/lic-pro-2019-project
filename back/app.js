@@ -36,20 +36,20 @@ app.delete('/api/delete/:uuid', (req, res) => {
     }
 
     console.log(req.params.uuid);
-    fs.exists('episodes/' + req.params.uuid + '.json', defer.resolve);
 
-    defer.promise.then(function(exists) {
-        if (exists) {
-            fs.unlink('episodes/' + req.params.uuid  + '.json');
-            res.status(200).send({
-                success: 'true',
-                message: 'episode deleted successfully',
-                episode: req.params.uuid,
-            })        } else {
-            res.status(500).send({
-                success: 'false',
-                message: 'Episode not found',
-            })        }
+    var promise = fileManager.removeEpisode(req.params.uuid);
+
+    promise.then(()=>{
+        res.status(200).send({
+            success: 'true',
+            message: 'episode deleted successfully',
+            episode: req.params.uuid,
+        });
+    }).catch(()=>{
+        res.status(500).send({
+            success: 'false',
+            message: 'Episode not found',
+        });
     });
 });
 
