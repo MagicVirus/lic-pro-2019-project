@@ -6,24 +6,30 @@ export default class Index extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {episode: []};
+    this._api = "http://localhost:5000/";
+    this.state = {episodes: []};
+
   }
   componentDidMount(){
-    axios.get('http://localhost:3000/episode')
-      .then(response => {
-        this.setState({ episode: response.data });
+      axios.get(this._api + "episodes").then(response => {
+          this.setState({ business: response.data });
       })
-      .catch(function (error) {
-        console.log(error);
-      })
-  }
-  tabRow(){
-    return this.state.episode.map(function(object, i){
-      return <TableRow obj={object} key={i} />;
-    });
   }
 
+    tabRow(){
+        return this.state.episodes.map(function(object, i){
+            const serie = {
+                episode_name: "lol",
+                episode_code: "lol",
+                episode_mark: 25,
+            }
+            return <TableRow obj={serie} key={0} />;
+
+    }
+
   render() {
+    if(this.state.episodes === '') return '<div></div>'
+
     return (
       <div>
         <h3 align="center">Liste d'épisodes</h3>
