@@ -1,110 +1,70 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const fs = require('fs');
-const fileManager = require('./fileManager');
+var fs = require('fs');
+const path = require('path');
 const uuidv1 = require('uuid/v1');
-const app = express();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+module.exports = {
 
-
-app.get('/api/episodes', (req, res) => {
-
-    var promise = fileManager.getEpisodes('episodes/',res);
-    promise.then((episodes) => {
-        res.send({
-            message: 'episodes retrieved successfully',
-            episodes: episodes,
+    addEpisode(episode) {
+        console.log(episode);
+        fs.writeFile('episodes/' + episode.id + '.json', JSON.stringify(episode, null, 2), 'utf8', (err) => {
+            if (err) return false;
         });
-    }).catch(() => {
-        res.status(500).send({
-            message: 'error retriving episodes',
+        return true;
+    },
+
+    getEpisodes(dirname) {
+        return new Promise((resolve, reject) => {
+            this.readEpisodes(dirname).then((fileNames) => {
+                const p = fileNames.map((fileName) => {
+                    return this.readEpisode(dirname, fileName);
+                });
+                Promise.all(p).then((episodes) => {
+                    resolve(episodes);
+                })
+            });
         });
-    });
-
-
-});
-
-app.delete('/api/delete/:uuid', (req, res) => {
-
-    if (!req.params.uuid) {
-        return res.status(400).send({
-            body: req.body,
-            success: 'false',
-            message: 'uuid is required'
+    },
+    readEpisodes: function (dirname) {
+        return new Promise(function (resolve, reject) {
+            fs.readdir(dirname, function (err, filename) {
+                resolve(filename);
+                if (err) reject('erreur');
+            });
         });
-    }
-
-    if ( fileManager.removeEpisode(req.params.uuid))
-    {
-        res.status(200).send({
-            success: 'true',
-            message: 'episode deleted successfully',
-            episode: req.params.uuid,
-        })
-    }
-    else {
-        res.status(500).send({
-            success: 'false',
-            message: 'File not found',
-        })
-    }
-});
-
-app.post('/api/add', (req, res) => {
-
-    if (!req.body.name || !req.body.code || !req.body.note) {
-        return res.status(400).send({
-            body: req.body,
-            success: 'false',
-            message: 'Missing parameters :'+'name ='+req.body.name+'; code ='+req.body.code + '; note ='+req.body.note
+    },
+    readEpisode: function (dirname, filename) {
+        return new Promise(function (resolve, reject) {
+            fs.readFile(dirname + filename, function (err, content) {
+                resolve(JSON.parse(content));
+                if (err) reject('erreur');
+            });
         });
-    }
+    },
 
-    const episode = {
-        id: uuidv1(),
-        name: req.body.name,
-        code: req.body.code,
-        note: req.body.note,
-    };
+    editEpisode(uuid, name, code, note) {
 
-    if( fileManager.addEpisode(episode)) {
-        return res.status(201).send({
-            success: 'true',
-            message: 'serie added successfully',
-            episode
-        })
-    }
-    else {
-        res.status(500).send({
-            success: 'false',
-            message: 'Error occured when adding episode',
+        var episode = {
+            id: uuid,
+            name: name,
+            code: code,
+            note: note,
+        };
+
+        if (fs.existsSync('episodes/' + uuid + '.json')) fs.unlinkSync('episodes/' + uuid + '.json');
+
+        fs.writeFile('episodes/' + episode.id + '.json', JSON.stringify(episode, null, 2), 'utf8', function (err) {
+            if (err) return false;
         });
-    }
-});
+        return true;
+    },
 
-app.put('/api/update/:uuid', (req, res) => {
-
-    if (!req.params.uuid) {
-        return res.status(400).send({
-            body: req.body,
-            success: 'false',
-            message: 'uuid is required'
+    removeEpisode(uuid) {
+        return new Promise((resolve, reject) => {
+            if (!fs.exists('episodes/' + uuid + '.json')) reject("Failed to delete this episode");
+            else {
+                fs.unlink('episodes/' + uuid + '.json');
+                resolve("Sucessfully deleted this episode");
+            }
         });
-    }
-
-    fileManager.editEpisode(req.body.uuid,req.body.name,req.body.code,req.body.note);
-
-    res.status(200).send({
-        success: 'true',
-        message: 'episode modified successfully',
-        episode: req.params.uuid,
-    })
-});
-
-const PORT = 5000;
-
-app.listen(PORT, () => {
-    console.log(`server running on port ${PORT}`)
-});
+    },
+};
