@@ -61,17 +61,21 @@ app.post('/api/episodes', (req, res) => {
         });
     }
 
-    if (fileManager.addEpisode(req.body.name, req.body.code, req.body.note)) {
-        return res.status(201).send({
+    var promise = fileManager.addEpisode(req.body.name, req.body.code, req.body.note);
+
+    promise.then((success)=>{
+        res.status(200).send({
             success: 'true',
-            message: 'Episode added successfully',
-        })
-    } else {
-        res.status(404).send({
-            success: 'false',
-            message: 'Error occured when adding episode',
+            message: success,
+            episode: req.params.uuid,
         });
-    }
+    }).catch((failed)=>{
+        res.status(500).send({
+            success: 'false',
+            message: 'Episode not created :' + failed,
+        });
+    });
+
 });
 
 app.put('/api/episodes/:uuid', (req, res) => {
@@ -92,20 +96,21 @@ app.put('/api/episodes/:uuid', (req, res) => {
         });
     }
 
-    if (fileManager.editEpisode(req.params.uuid, req.body.name, req.body.code, req.body.note)) {
 
+    var promise = fileManager.editEpisode(req.params.uuid, req.body.name, req.body.code, req.body.note);
+
+    promise.then((success)=>{
         res.status(200).send({
             success: 'true',
-            message: 'episode modified successfully',
+            message: success,
             episode: req.params.uuid,
-        })
-    } else {
-        return res.status(404).send({
-            body: req.body,
-            success: 'false',
-            message: 'Erreur when modifying the episode',
         });
-    }
+    }).catch((failed)=>{
+        res.status(500).send({
+            success: 'false',
+            message: 'Episode not modified :' + failed,
+        });
+    });
 });
 
 const PORT = 5000;

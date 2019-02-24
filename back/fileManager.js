@@ -1,4 +1,4 @@
-var fs = require('fs');
+const fs = require('fs');
 const path = require('path');
 const uuidv1 = require('uuid/v1');
 const fse = require('fs-extra');
@@ -6,19 +6,27 @@ module.exports = {
 
     addEpisode: function (name, code, note) {
 
-        let episode = {
-            id: uuidv1(),
-            name: name,
-            code: code,
-            note: note,
-        };
-
-        console.log(episode.id);
-
-        fs.writeFile('episodes/' + episode.id + '.json', JSON.stringify(episode, null, 2), 'utf8', (err) => {
-            if (err) return false;
+        return new Promise(async function (resolve, reject) {
+            const episode = {
+                id: uuidv1(),
+                name: name,
+                code: code,
+                note: note,
+            };
+            const file = 'episodes/' + episode.id + '.json';
+            const exists = await fse.pathExists(file);
+            if (exists) {
+                reject("Le fichier " + file + " existe déjà")
+            } else {
+                fse.writeJson(file, episode,{spaces :2})
+                    .then(() => {
+                        resolve("Le fichier " + file + " a bien été créer")
+                    })
+                    .catch(err => {
+                        resolve(err + " : Le fichier " + file + " n'a pas pu être créé")
+                    });
+            }
         });
-        return true;
     },
 
     getEpisodes(dirname) {
@@ -51,32 +59,41 @@ module.exports = {
     },
 
     editEpisode(uuid, name, code, note) {
+        return new Promise(async function (resolve, reject) {
+            const episode = {
+                id: uuid,
+                name: name,
+                code: code,
+                note: note,
+            };
+            const file = 'episodes/' + uuid + '.json';
+            const exists = await fse.pathExists(file);
+            if (exists) {
+                await fse.remove(file).catch((err) => reject(err + " : Le fichier " + file + " n'a pas pu être supprimé"));
+                fse.writeJson(file, episode)
+                    .then(() => {
+                        resolve("Le fichier " + file + " a bien été modifié")
+                    })
+                    .catch(err => {
+                        resolve(err + " : Le fichier " + file + " n'a pas été modifié")
+                    });
+            } else {
+                reject("Le fichier " + file + " n'existe pas")
+            }
 
-        var episode = {
-            id: uuid,
-            name: name,
-            code: code,
-            note: note,
-        };
-
-        if (fs.existsSync('episodes/' + uuid + '.json')) fs.unlinkSync('episodes/' + uuid + '.json');
-
-        fs.writeFile('episodes/' + episode.id + '.json', JSON.stringify(episode, null, 2), 'utf8', function (err) {
-            if (err) return false;
         });
-        return true;
     },
 
     removeEpisode: function (uuid) {
         return new Promise(async function (resolve, reject) {
             const file = 'episodes/' + uuid + '.json';
             const exists = await fse.pathExists(file);
-            if (exists){
+            if (exists) {
                 fse.remove(file)
-                    .then(()=>resolve("Le fichier "+ file +" à bien été supprimé"))
-                    .catch((err)=> reject(err + " : Le fichier "+ file +" n'a pas été supprimé"))
-            }else {
-                reject("Le fichier "+ file +" n'existe pas")
+                    .then(() => resolve("Le fichier " + file + " a bien été supprimé"))
+                    .catch((err) => reject(err + " : Le fichier " + file + " n'a pas été supprimé"))
+            } else {
+                reject("Le fichier " + file + " n'existe pas")
             }
         });
     },
