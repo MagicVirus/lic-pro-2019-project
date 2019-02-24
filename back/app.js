@@ -25,7 +25,7 @@ app.get('/api/episodes', (req, res) => {
     });
 });
 
-app.delete('/api/delete/:uuid', (req, res) => {
+app.delete('/api/episodes/:uuid', (req, res) => {
 
     if (!req.params.uuid) {
         return res.status(400).send({
@@ -53,7 +53,7 @@ app.delete('/api/delete/:uuid', (req, res) => {
     });
 });
 
-app.post('/api/add', (req, res) => {
+app.post('/api/episodes', (req, res) => {
 
     if (!req.body.name || !req.body.code || !req.body.note) {
         return res.status(400).send({
@@ -76,7 +76,7 @@ app.post('/api/add', (req, res) => {
     }
 });
 
-app.put('/api/update/:uuid', (req, res) => {
+app.put('/api/episodes/:uuid', (req, res) => {
 
     if (!req.params.uuid) {
         return res.status(404).send({
