@@ -3,6 +3,4 @@ Trinome :
     - Denis Karupovic
     - Issam Kadar
     
-Date de rendu 1 mars.
-
-report issam parce quil a pas creer le dossier episodes .
+Date de rendu 27 février 0h00.
