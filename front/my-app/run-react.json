@@ -1,0 +1,9 @@
+{
+  "entrys": [
+    "docs/index.tsx"
+  ],
+  "dlls": [
+    "react",
+    "react-dom"
+  ]
+}
