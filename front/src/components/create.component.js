@@ -10,44 +10,44 @@ export class Create extends Component{
     this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
-      episode_name: '',
-      episode_code: '',
-      episode_mark:''
+      name: '',
+      code: '',
+      note:''
     }
   }
   onChangeEpisodeName(e) {
     this.setState({
-      episode_name: e.target.value
+      name: e.target.value
     });
   }
   onChangeEpisodeCode(e) {
     this.setState({
-      episode_code: e.target.value
+      code: e.target.value
     })
   }
   onChangeEpisodeMark(e) {
     this.setState({
-      episode_mark: e.target.value
+      note: e.target.value
     })
   }
 
   onSubmit(e) {
     e.preventDefault();
     const obj = {
-        episode_name: this.state.episode_name,
-        episode_code: this.state.episode_code,
-        episode_mark: this.state.episode_mark
+        name: this.state.name,
+        code: this.state.code,
+        note: this.state.note
     };
-    axios.post('http://localhost:3000/create', obj)
+    axios.post('http://localhost:5000/create', obj)
         .then(res => console.log(res.data));
 
       this.setState({
-          episode_name: '',
-          episode_code: '',
-          episode_mark: ''
+          name: '',
+          code: '',
+          note: ''
       })
 
-    console.log(`The values are ${this.state.episode_name}, ${this.state.episode_code}, and ${this.state.episode_mark}`)
+    console.log(`on envoie ${this.state.name}, ${this.state.code}, and ${this.state.note}`)
   }
 
   render() {
@@ -60,7 +60,7 @@ export class Create extends Component{
             <input
               type="text"
               className="form-control"
-              value={this.state.episode_name}
+              value={this.state.name}
               onChange={this.onChangeEpisodeName}
             />
           </div>
@@ -68,7 +68,7 @@ export class Create extends Component{
             <label>Code de l'épisode</label>
             <input type="text"
                    className="form-control"
-                   value={this.state.episode_code}
+                   value={this.state.code}
                    onChange={this.onChangeEpisodeCode}
             />
           </div>
@@ -78,7 +78,7 @@ export class Create extends Component{
                    min="1"
                    placeholder="Note de l'épisode"
                    className="form-control"
-                   value={this.state.episode_mark}
+                   value={this.state.note}
                    onChange={this.onChangeEpisodeMark}
             />
           </div>

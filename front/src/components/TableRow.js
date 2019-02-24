@@ -1,23 +1,26 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 class TableRow extends Component {
   render() {
     return (
       <tr>
         <td>
-          {this.props.obj.episode_name}
+          {this.props.object.id}
         </td>
         <td>
-          {this.props.obj.episode_code}
+          {this.props.object.name}
         </td>
         <td>
-          {this.props.obj.episode_mark}
+          {this.props.object.code}
         </td>
         <td>
-          <button className="btn btn-primary">Edit</button>
+          {this.props.object.note}
         </td>
         <td>
-          <button className="btn btn-danger">Delete</button>
+          <Link to={"/episodes/"+this.props.object.id} className="btn btn-action btn-primary">Editer</Link>
+          <br/>
+          <Link to={"/episodes/"+this.props.object.id} className="btn btn-action btn-danger">Supprimer</Link>
         </td>
       </tr>
     );
