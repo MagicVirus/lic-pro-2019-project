@@ -2,8 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fileManager = require('./fileManager');
 const app = express();
-var fs = require('fs');
-var Q = require('q');
+const fs = require('fs');
+const Q = require('q');
 
 var defer = Q.defer();
 
