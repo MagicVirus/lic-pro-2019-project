@@ -4,6 +4,7 @@ import axios from 'axios';
 export class Create extends Component{
   constructor(props) {
     super(props);
+    this._api = "http://localhost:5000/api/";
     this.onChangeEpisodeName = this.onChangeEpisodeName.bind(this);
     this.onChangeEpisodeCode = this.onChangeEpisodeCode.bind(this);
     this.onChangeEpisodeMark = this.onChangeEpisodeMark.bind(this);
@@ -38,13 +39,13 @@ export class Create extends Component{
         code: this.state.code,
         note: this.state.note
     };
-    axios.post('http://localhost:5000/create', obj)
+    axios.post(this._api + "episodes", obj)
         .then(res => console.log(res.data));
 
       this.setState({
           name: '',
           code: '',
-          note: ''
+          note: 0
       })
 
     console.log(`on envoie ${this.state.name}, ${this.state.code}, and ${this.state.note}`)

@@ -1,13 +1,26 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+
 
 class TableRow extends Component {
+  constructor(props) {
+    super(props);
+    this._api = "http://localhost:5000/api/";
+    this.delete = this.delete.bind(this);
+  }
+
+  delete() {
+    if (this.props.object.id !== undefined) {
+      axios.delete(this._api + "episodes/" + this.props.object.id)
+        .then(console.log(this.props.obj.id + ' supprimé !'))
+        .catch(err => console.log(err))
+    }
+  }
+
   render() {
     return (
       <tr>
-        <td>
-          {this.props.object.id}
-        </td>
         <td>
           {this.props.object.name}
         </td>
@@ -18,9 +31,9 @@ class TableRow extends Component {
           {this.props.object.note}
         </td>
         <td>
-          <Link to={"/episodes/"+this.props.object.id} className="btn btn-action btn-primary">Editer</Link>
+          <Link to={"/editer/"+this.props.object.id} className="btn btn-action btn-primary">Editer</Link>
           <br/>
-          <Link to={"/episodes/"+this.props.object.id} className="btn btn-action btn-danger">Supprimer</Link>
+          <button onClick={this.delete} className="btn btn-action btn-danger">Supprimer</button>
         </td>
       </tr>
     );

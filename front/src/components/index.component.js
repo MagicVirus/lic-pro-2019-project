@@ -6,14 +6,15 @@ export default class Index extends Component {
 
   constructor(props) {
     super(props);
-    this._api = "http://localhost:5000/";
+    this._api = "http://localhost:5000/api/";
     this.state = {episodes: []};
   }
 
   componentDidMount(){
+    console.log(this._api + "episodes")
       axios.get(this._api + "episodes")
         .then(response => {
-          this.setState({ episodes: response.data.todos.data });
+          this.setState({ episodes: response.data.episodes });
       })
         .catch(function (error) {
           console.log(error);
@@ -37,7 +38,6 @@ export default class Index extends Component {
         <table className="table table-striped" style={{ marginTop: 20 }}>
           <thead>
           <tr>
-            <th>Id</th>
             <th>Nom de l'épisode</th>
             <th>Code</th>
             <th>Note</th>
