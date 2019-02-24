@@ -1,11 +1,13 @@
-var express = require('express');
-var db = require('./db/db');
-var bodyParser = require('body-parser');
-var fs = require('fs');
+const express = require('express');
+const db = require('./db/db');
+const bodyParser = require('body-parser');
+const fs = require('fs');
+const cors = require('cors')
 
 // Set up the express app
 const app = express();
 
+app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
