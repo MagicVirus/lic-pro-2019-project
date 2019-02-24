@@ -1,49 +1,113 @@
-var express = require('express');
-var db = require('./db/db');
-var bodyParser = require('body-parser');
-var fs = require('fs');
-
-// Set up the express app
+const express = require('express');
+const bodyParser = require('body-parser');
+const fileManager = require('./fileManager');
 const app = express();
+var fs = require('fs');
+var Q = require('q');
+
+var defer = Q.defer();
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 
-// get all todos
-app.get('/episodes', (req, res) => {
-    res.status(200).send({
-        success: 'true',
-        message: 'series retrieved successfully',
-        todos: db
-    })
+
+app.get('/api/episodes', (req, res) => {
+    var promise = fileManager.getEpisodes('episodes/',res);
+    promise.then((episodes) => {
+        res.send({
+            message: 'episodes retrieved successfully',
+            episodes: episodes,
+        });
+    }).catch(() => {
+        res.status(500).send({
+            message: 'error retriving episodes',
+        });
+    });
 });
-app.post('/create', (req, res) => {
-  if(!req.body.name) {
-    return res.status(400).send({
-      body: req.body,
-      success: 'false',
-      message: 'name is required'
-    });
-  } else if(!req.body.code) {
-    return res.status(400).send({
-      success: 'false',
-      message: 'code is required'
-    });
-  }
-  const serie = {
-    id: db.data.length + 1,
-    name: req.body.name,
-    code: req.body.code,
-    note: 0,
-  }
-  db.data.push(serie);
-  fs.writeFile('myjsonfile.json', JSON.stringify(db), 'utf8', null);
 
-  return res.status(201).send({
-    success: 'true',
-    message: 'serie added successfully',
-    serie
-  })
+app.delete('/api/delete/:uuid', (req, res) => {
+
+    if (!req.params.uuid) {
+        return res.status(400).send({
+            body: req.body,
+            success: 'false',
+            message: 'uuid is required'
+        });
+    }
+
+    console.log(req.params.uuid);
+
+    var promise = fileManager.removeEpisode(req.params.uuid);
+
+    promise.then(()=>{
+        res.status(200).send({
+            success: 'true',
+            message: 'episode deleted successfully',
+            episode: req.params.uuid,
+        });
+    }).catch(()=>{
+        res.status(500).send({
+            success: 'false',
+            message: 'Episode not found',
+        });
+    });
+});
+
+app.post('/api/add', (req, res) => {
+
+    if (!req.body.name || !req.body.code || !req.body.note) {
+        return res.status(400).send({
+            body: req.body,
+            success: 'false',
+            message: 'Missing parameters \n' + 'name =' + req.body.name + '\ncode =' + req.body.code + '\nnote =' + req.body.note
+        });
+    }
+
+    if (fileManager.addEpisode(req.body.name, req.body.code, req.body.note)) {
+        return res.status(201).send({
+            success: 'true',
+            message: 'Episode added successfully',
+        })
+    } else {
+        res.status(404).send({
+            success: 'false',
+            message: 'Error occured when adding episode',
+        });
+    }
+});
+
+app.put('/api/update/:uuid', (req, res) => {
+
+    if (!req.params.uuid) {
+        return res.status(404).send({
+            body: req.body,
+            success: 'false',
+            message: 'Uuid is required as parameter'
+        });
+    }
+
+    if (!req.body.name || !req.body.code || !req.body.note) {
+        return res.status(404).send({
+            body: req.body,
+            success: 'false',
+            message: 'Missing parameters \n' + 'name =' + req.body.name + '\ncode =' + req.body.code + '\nnote =' + req.body.note
+        });
+    }
+
+    if (fileManager.editEpisode(req.params.uuid, req.body.name, req.body.code, req.body.note)) {
+
+        res.status(200).send({
+            success: 'true',
+            message: 'episode modified successfully',
+            episode: req.params.uuid,
+        })
+    } else {
+        return res.status(404).send({
+            body: req.body,
+            success: 'false',
+            message: 'Erreur when modifying the episode',
+        });
+    }
 });
 
 const PORT = 5000;
