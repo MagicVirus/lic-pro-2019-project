@@ -2,13 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fileManager = require('./fileManager');
 const app = express();
-const cors = require('cors');
-const fs = require('fs');
-const Q = require('q');
+var fs = require('fs');
 
-var defer = Q.defer();
 
-app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
@@ -41,16 +37,16 @@ app.delete('/api/episodes/:uuid', (req, res) => {
 
     var promise = fileManager.removeEpisode(req.params.uuid);
 
-    promise.then(()=>{
+    promise.then((success)=>{
         res.status(200).send({
             success: 'true',
-            message: 'episode deleted successfully',
+            message: success,
             episode: req.params.uuid,
         });
-    }).catch(()=>{
+    }).catch((failed)=>{
         res.status(500).send({
             success: 'false',
-            message: 'Episode not found',
+            message: 'Episode not found :' + failed,
         });
     });
 });

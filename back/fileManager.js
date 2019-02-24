@@ -1,12 +1,10 @@
 var fs = require('fs');
 const path = require('path');
 const uuidv1 = require('uuid/v1');
-var Q = require('q');
-var defer = Q.defer();
-
+const fse = require('fs-extra');
 module.exports = {
 
-    addEpisode(name, code, note) {
+    addEpisode: function (name, code, note) {
 
         let episode = {
             id: uuidv1(),
@@ -69,23 +67,17 @@ module.exports = {
         return true;
     },
 
-    removeEpisode(uuid) {
-        return new Promise(function (resolve, reject) {
-            fs.exists('episodes/' + uuid + '.json', defer.resolve);
-            defer.promise.then(function (exists) {
-                if (exists) {
-                    fs.unlink('episodes/' + uuid + '.json', function (err) {
-                        if (err) {
-                            return console.log("Delete error: " + err);
-                        } else {
-                            console.log("file deleted successfully");
-                        }
-                    });
-                    resolve("Deleted");
-                } else {
-                    reject("Failed to delete");
-                }
-            });
+    removeEpisode: function (uuid) {
+        return new Promise(async function (resolve, reject) {
+            const file = 'episodes/' + uuid + '.json';
+            const exists = await fse.pathExists(file);
+            if (exists){
+                fse.remove(file)
+                    .then(()=>resolve("Le fichier "+ file +" à bien été supprimé"))
+                    .catch((err)=> reject(err + " : Le fichier "+ file +" n'a pas été supprimé"))
+            }else {
+                reject("Le fichier "+ file +" n'existe pas")
+            }
         });
     },
 };
