@@ -24,6 +24,21 @@ app.get('/api/episodes', (req, res) => {
     });
 });
 
+app.get('/api/episode/:uuid', (req, res) => {
+
+    var promise = fileManager.getEpisode('episodes/', req.params.uuid + "json",res);
+    promise.then((episodes) => {
+        res.send({
+            message: 'episode retrieved successfully',
+            episode: episode,
+        });
+    }).catch(() => {
+        res.status(500).send({
+            message: 'error retriving episode',
+        });
+    });
+});
+
 app.delete('/api/episodes/:uuid', (req, res) => {
 
     if (!req.params.uuid) {
@@ -33,8 +48,6 @@ app.delete('/api/episodes/:uuid', (req, res) => {
             message: 'uuid is required'
         });
     }
-
-    console.log(req.params.uuid);
 
     var promise = fileManager.removeEpisode(req.params.uuid);
 

@@ -41,6 +41,19 @@ module.exports = {
             });
         });
     },
+
+    getEpisode(dirname,uuid) {
+        return new Promise((resolve, reject) => {
+            this.readEpisode(dirname).then((fileName) => {
+                const p = fileNames.map((fileName) => {
+                    return this.readEpisode(dirname, uuid);
+                });
+                Promise.all(p).then((episode) => {
+                    resolve(episode);
+                })
+            });
+        });
+    },
     readEpisodes: function (dirname) {
         return new Promise(function (resolve, reject) {
             fs.readdir(dirname, function (err, filename) {
@@ -51,6 +64,7 @@ module.exports = {
     },
     readEpisode: function (dirname, filename) {
         return new Promise(function (resolve, reject) {
+            console.log('test'  +  filename);
             fs.readFile(dirname + filename, function (err, content) {
                 resolve(JSON.parse(content));
                 if (err) reject('erreur');
