@@ -24,17 +24,24 @@ app.get('/api/episodes', (req, res) => {
     });
 });
 
-app.get('/api/episode/:uuid', (req, res) => {
+app.get('/api/episodes/:uuid', (req, res) => {
+    if (!req.params.uuid) {
+        return res.status(400).send({
+            body: req.body,
+            success: 'false',
+            message: 'uuid is required'
+        });
+    }
 
-    var promise = fileManager.getEpisode('episodes/', req.params.uuid + "json",res);
-    promise.then((episodes) => {
+    var promise = fileManager.getEpisode(req.params.uuid);
+    promise.then((episode) => {
         res.send({
             message: 'episode retrieved successfully',
             episode: episode,
         });
-    }).catch(() => {
+    }).catch((err) => {
         res.status(500).send({
-            message: 'error retriving episode',
+            message: err,
         });
     });
 });

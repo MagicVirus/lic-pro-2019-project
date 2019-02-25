@@ -42,18 +42,6 @@ module.exports = {
         });
     },
 
-    getEpisode(dirname,uuid) {
-        return new Promise((resolve, reject) => {
-            this.readEpisode(dirname).then((fileName) => {
-                const p = fileNames.map((fileName) => {
-                    return this.readEpisode(dirname, uuid);
-                });
-                Promise.all(p).then((episode) => {
-                    resolve(episode);
-                })
-            });
-        });
-    },
     readEpisodes: function (dirname) {
         return new Promise(function (resolve, reject) {
             fs.readdir(dirname, function (err, filename) {
@@ -62,6 +50,7 @@ module.exports = {
             });
         });
     },
+
     readEpisode: function (dirname, filename) {
         return new Promise(function (resolve, reject) {
             console.log('test'  +  filename);
@@ -98,6 +87,18 @@ module.exports = {
         });
     },
 
+    getEpisode(uuid) {
+        return new Promise(async function (resolve, reject) {
+            const file = 'episodes/' + uuid + '.json';
+            const exists = await fse.pathExists(file);
+            if (exists) {
+                const packageObj = await fse.readJson(file).catch((err) => reject(err + " : Le fichier " + file + " n'a pu être lu"));
+                resolve(packageObj);
+            } else {
+                reject("Le fichier " + file + " n'existe pas")
+            }
+        });
+    },
     removeEpisode: function (uuid) {
         return new Promise(async function (resolve, reject) {
             const file = 'episodes/' + uuid + '.json';
