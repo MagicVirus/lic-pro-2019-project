@@ -1,0 +1,25 @@
+GET /episodes/{id}
+POST /episodes
+PUT /episodes/{id}
+DELETE /episodes/{id}
+
+API REST qui va renvoyer du JSON
+
+Denis :  Nom [ Serie ]
+         Code [ NumeroSerie ]
+         Note [ NoteSerie ]
+
+Julien :
+         Api Rest :
+                    GET /episodes/{id}
+                    POST /episodes
+                    PUT /episodes/{id}
+                    DELETE /episodes/{id}
+
+Issam:
+        test d'intégration
+
+Debug :
+https_proxy=""
+http_proxy=""
+npm install -i express
