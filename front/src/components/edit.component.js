@@ -18,7 +18,7 @@ export default class Edit extends Component {
   }
 
   componentDidMount() {
-    axios.get(this._api + this.props.match.params.id)
+    axios.get(this._api + "episodes/" + this.props.match.params.id)
       .then(response => {
         this.setState({
           name: response.data.name,
@@ -53,7 +53,7 @@ export default class Edit extends Component {
       code: this.state.code,
       note: this.state.note
     };
-    axios.put(this._api + this.props.match.params.id, obj)
+    axios.put(this._api + "episodes/" + this.props.match.params.id, obj)
       .then(res => console.log(res.data));
 
     this.props.history.push('/index');

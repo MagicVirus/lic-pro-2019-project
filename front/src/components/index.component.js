@@ -11,7 +11,6 @@ export default class Index extends Component {
   }
 
   componentDidMount(){
-    console.log(this._api + "episodes")
       axios.get(this._api + "episodes")
         .then(response => {
           this.setState({ episodes: response.data.episodes });
