@@ -11,10 +11,10 @@ class App extends Component {
     return (
       <Router>
         <div className="container">
-          <nav className="navbar navbar-expand-lg navbar-light bg-light">
+          <nav className="navbar navbar-expand-lg navbar-light bg-light nav-wrapper">
             <Link to={'/'} className="navbar-brand">Projet de qualité</Link>
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul className="navbar-nav mr-auto">
+              <ul id="nav-mobile" className="navbar-nav mr-auto left hide-on-med-and-down">
                 <li className="nav-item">
                   <Link to={'/'} className="nav-link">Accueil</Link>
                 </li>

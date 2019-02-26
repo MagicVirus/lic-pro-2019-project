@@ -24,7 +24,7 @@ export default class Index extends Component {
     let object = this.state.episodes;
     return Object.keys(object).map(function(objectKey, index) {
       let value = object[objectKey];
-      return <TableRow object={value} key={index} />;
+      return <TableRow object={value} key={index} indice={index}/>;
     });
   }
 

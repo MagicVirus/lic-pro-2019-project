@@ -1,5 +1,9 @@
 import React, {Component}  from 'react';
 import axios from 'axios';
+import Popup from './Popup';
+import 'materialize-css/dist/css/materialize.min.css'
+import M from 'materialize-css';
+
 
 export class Create extends Component{
   constructor(props) {
@@ -13,9 +17,11 @@ export class Create extends Component{
     this.state = {
       name: '',
       code: '',
-      note:''
+      note:'',
+      showPopup: false
     }
   }
+
   onChangeEpisodeName(e) {
     this.setState({
       name: e.target.value
@@ -32,6 +38,12 @@ export class Create extends Component{
     })
   }
 
+  togglePopup() {
+    this.setState({
+      showPopup: !this.state.showPopup
+    });
+  }
+
   onSubmit(e) {
     e.preventDefault();
     const obj = {
@@ -40,15 +52,15 @@ export class Create extends Component{
         note: this.state.note
     };
     axios.post(this._api + "episodes", obj)
-        .then(res => console.log(res.data));
+        .then(res => res.data);
+
+    this.togglePopup()
 
       this.setState({
           name: '',
           code: '',
           note: 0
       })
-
-    console.log(`on envoie ${this.state.name}, ${this.state.code}, and ${this.state.note}`)
   }
 
   render() {
@@ -77,6 +89,7 @@ export class Create extends Component{
             <label>Note</label>
             <input type="number"
                    min="1"
+                   max="10"
                    placeholder="Note de l'épisode"
                    className="form-control"
                    value={this.state.note}
@@ -84,9 +97,18 @@ export class Create extends Component{
             />
           </div>
           <div className="form-group">
-            <input type="submit" value="Ajouter" className="btn btn-primary"/>
+            <button className="btn btn-primary waves-effect waves-light" type="submit" value="Ajouter">Submit
+              <i className="material-icons right">send</i>
+            </button>
           </div>
         </form>
+        {this.state.showPopup ?
+          <Popup
+            text='Episode ajouté !'
+            closePopup={this.togglePopup.bind(this)}
+          />
+          : null
+        }
       </div>
     )
   }

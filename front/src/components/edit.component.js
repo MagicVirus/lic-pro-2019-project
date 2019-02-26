@@ -54,7 +54,7 @@ export default class Edit extends Component {
       note: this.state.note
     };
     axios.put(this._api + "episodes/" + this.props.match.params.id, obj)
-      .then(res => console.log(res.data));
+      .then(res => res.data);
 
     this.props.history.push('/index');
   }
@@ -62,7 +62,7 @@ export default class Edit extends Component {
   render() {
     return (
       <div style={{ marginTop: 10 }}>
-        <h3>Ajouter un nouvel épisode</h3>
+        <h3>Vous éditez l'épisode {this.state.name}</h3>
         <form onSubmit={this.onSubmit}>
           <div className="form-group">
             <label>Nom de l'épisode</label>

@@ -11,11 +11,11 @@ class TableRow extends Component {
   }
 
   delete() {
-    if (this.props.object.id !== undefined) {
-      axios.delete(this._api + "episodes/" + this.props.object.id)
-        .then(console.log(this.props.obj.id + ' supprimé !'))
-        .catch(err => console.log(err))
-    }
+    axios.delete(this._api + "episodes/" + this.props.object.id)
+      .then(res => {
+        window.location.reload();
+      })
+      .catch(err => console.log(err))
   }
 
   render() {
