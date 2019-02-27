@@ -21,9 +21,9 @@ export default class Edit extends Component {
     axios.get(this._api + "episodes/" + this.props.match.params.id)
       .then(response => {
         this.setState({
-          name: response.data.name,
-          code: response.data.code,
-          note: response.data.note });
+          name: response.data.episode.name,
+          code: response.data.episode.code,
+          note: response.data.episode.note });
       })
       .catch(function (error) {
         console.log(error);
