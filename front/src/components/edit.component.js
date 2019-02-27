@@ -85,7 +85,7 @@ export default class Edit extends Component {
             <label>Note</label>
             <input type="number"
                    min="1"
-                   placeholder="Note de l'épisode"
+                   max="10"
                    className="form-control"
                    value={this.state.note}
                    onChange={this.onChangeEpisodeMark}

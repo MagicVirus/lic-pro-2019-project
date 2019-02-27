@@ -66,7 +66,7 @@ export class Create extends Component{
   render() {
     return (
       <div style={{ marginTop: 10 }}>
-        <h3>Ajouter un nouvel épisode</h3>
+        <h4>Ajouter un nouvel épisode</h4>
         <form onSubmit={this.onSubmit}>
           <div className="form-group">
             <label>Nom de l'épisode</label>
@@ -90,16 +90,13 @@ export class Create extends Component{
             <input type="number"
                    min="1"
                    max="10"
-                   placeholder="Note de l'épisode"
                    className="form-control"
                    value={this.state.note}
                    onChange={this.onChangeEpisodeMark}
             />
           </div>
           <div className="form-group">
-            <button className="btn btn-primary waves-effect waves-light" type="submit" value="Ajouter">Submit
-              <i className="material-icons right">send</i>
-            </button>
+            <button className="btn btn-primary waves-effect waves-light" type="submit" value="Ajouter">Ajouter</button>
           </div>
         </form>
         {this.state.showPopup ?
